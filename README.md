@@ -10,7 +10,7 @@ cd -
 cmsRun HIG-RunIIFall17wmLHEGS-01124_1_cfg.py
 ```
 
-#For running madspin issues
+# For running madspin issues
 ```
 login to lxplus6/7
 cmsrel CMSSW_9_3_8
