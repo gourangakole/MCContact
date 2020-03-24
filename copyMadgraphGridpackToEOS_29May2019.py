@@ -84,10 +84,13 @@ for fullgridpackpath in fullgridpackpaths:
 	#print("gridpackdir", gridpackdir)
 	version = args.version # change if needed by hand
         if (args.era == "2016"): 
+           basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/slc6_amd64_gcc630/13TeV/madgraph'
            # basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/slc6_amd64_gcc481/13TeV/madgraph'
-           basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/pre2017/13TeV/madgraph'
+           # basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/pre2017/13TeV/madgraph'
         elif (args.era == "2017"):
            basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/2017/13TeV/madgraph'
+        elif (args.era == "UL"):
+           basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/UL/13TeV/madgraph'
         else:
            basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/2018/13TeV/madgraph'
 
