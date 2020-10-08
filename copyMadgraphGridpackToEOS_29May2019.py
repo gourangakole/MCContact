@@ -13,7 +13,7 @@ parser.add_argument("-copy", "--copyToEos", dest="doCopy", default=False,
 parser.add_argument("-is4FS", "--is4FS", dest="is4FS", default=False,
                     help="make it to true if you want to make a subdir with 4FS")
 parser.add_argument("-version", "--version", dest="version", default="v1",
-                    help="make it to true if you want to make a subdir with 4FS")
+                    help="if you want to copy in v2 directry")
 parser.add_argument("-era", "--era", dest="era", default="2017",
                     help="where to keep the gridpack e.g 2017")
 parser.add_argument("-MGversion", "--MGversion", dest="mgversion", default="V5_2.6.0",
@@ -80,7 +80,8 @@ for fullgridpackpath in fullgridpackpaths:
 	#print('stat -c "%a %n"' +fullgridpackpath) # FIXME in future for check the permission
 	gridpackname = fullgridpackpath.split("/")[-1]
 	#print("gridpackname", gridpackname)
-	gridpackdir = gridpackname.split("_slc6")[0]
+        #gridpackdir = gridpackname.split("_slc6")[0]
+        gridpackdir = gridpackname.split("_slc7")[0]
 	#print("gridpackdir", gridpackdir)
 	version = args.version # change if needed by hand
         if (args.era == "2016"): 
@@ -140,3 +141,11 @@ for fullgridpackpath in fullgridpackpaths:
 os.system('echo "------------------------------------"')
 
 #        gridpack_eos_path = gridpack_cvmfs_path.replace('/cvmfs/cms.cern.ch/phys_generator/gridpacks/','/eos/cms/store/group/phys_generator/cvmfs/gridpacks/')
+
+   
+       
+ 
+        
+              
+
+              
