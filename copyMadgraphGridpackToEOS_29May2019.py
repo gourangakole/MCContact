@@ -1,6 +1,10 @@
 import os,sys
 from argparse import ArgumentParser
-
+from stat import *
+'''
+#Last used:
+python copyMadgraphGridpackToEOS_29May2019.py --file filedir/HWW_one.txt --era 2016 --MGversion V5_2.6.5 --version v2
+'''
 parser = ArgumentParser()
 
 # https://martin-thoma.com/how-to-parse-command-line-arguments-in-python/
@@ -41,6 +45,40 @@ print("MGversion: ",args.mgversion)
 # ##############################################
 
 #my_path = '/tmp/'+os.environ['USER']+'/replace_gridpacks/'
+class colors:
+   colordict = {
+                'RED'        : '\033[91m',
+                'GREEN'      : '\033[92m',
+                'BLUE'       : '\033[34m',
+                'GRAY'       : '\033[90m',
+                'WHITE'      : '\033[00m',
+                'ORANGE'     : '\033[33m',
+                'CYAN'       : '\033[36m',
+                'PURPLE'     : '\033[35m',
+                'LIGHTRED'   : '\033[91m',
+                'PINK'       : '\033[95m',
+                'YELLOW'     : '\033[93m',
+                'BLINK'      : '\033[5m' ,
+                'NORMAL'     : '\033[28m' ,
+                "WARNING"    : '\033[1;31m',
+                }
+   if sys.stdout.isatty():
+        RED      = colordict['RED']
+        GREEN    = colordict['GREEN']
+        BLUE     = colordict['BLUE']
+        GRAY     = colordict['GRAY']
+        WHITE    = colordict['WHITE']
+        ORANGE   = colordict['ORANGE']
+        CYAN     = colordict['CYAN']
+        PURPLE   = colordict['PURPLE']
+        LIGHTRED = colordict['LIGHTRED']
+        PINK     = colordict['PINK']
+        YELLOW   = colordict['YELLOW']
+        BLINK    = colordict['BLINK']
+        NORMAL   = colordict['NORMAL']
+        WARNING  = colordict['WARNING']
+   else:
+        RED, GREEN, BLUE, GRAY, WHITE, ORANGE, CYAN, PURPLE, LIGHTRED, PINK, YELLOW, BLINK, NORMAL, WARNING = '', '', '', '', '', '', '', '', '', '', '', '', '', ''
 
 #----------------------------------------------------------------------
 # main
@@ -77,13 +115,16 @@ print "Total number of gridpack: ", len(fullgridpackpaths)
 for fullgridpackpath in fullgridpackpaths:
 
         #os.system('echo '+fullgridpackpath) # this is just for prining initial full path
-	#print('stat -c "%a %n"' +fullgridpackpath) # FIXME in future for check the permission
 	gridpackname = fullgridpackpath.split("/")[-1]
+        # check gridpack permission throw errors if not 644
+        errormsg = '{:<20} {:<40}'.format("%sGridpack" % (colors.colordict["RED"]) , ": "+fullgridpackpath)
+        if (int (oct(os.stat(fullgridpackpath)[ST_MODE])[-3:])) != 644:
+           raise Exception(errormsg + "\nhas different permission than 644!")
 	#print("gridpackname", gridpackname)
         #gridpackdir = gridpackname.split("_slc6")[0]
         gridpackdir = gridpackname.split("_slc7")[0]
 	#print("gridpackdir", gridpackdir)
-	version = args.version # change if needed by hand
+	version = args.version 
         if (args.era == "2016"): 
            basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/slc6_amd64_gcc630/13TeV/madgraph'
            # basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/slc6_amd64_gcc481/13TeV/madgraph'
