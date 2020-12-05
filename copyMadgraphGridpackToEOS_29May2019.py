@@ -182,11 +182,3 @@ for fullgridpackpath in fullgridpackpaths:
 os.system('echo "------------------------------------"')
 
 #        gridpack_eos_path = gridpack_cvmfs_path.replace('/cvmfs/cms.cern.ch/phys_generator/gridpacks/','/eos/cms/store/group/phys_generator/cvmfs/gridpacks/')
-
-   
-       
- 
-        
-              
-
-              
