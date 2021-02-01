@@ -22,6 +22,8 @@ parser.add_argument("-era", "--era", dest="era", default="2017",
                     help="where to keep the gridpack e.g 2017")
 parser.add_argument("-MGversion", "--MGversion", dest="mgversion", default="V5_2.6.0",
                     help="which version of MadGraph5 e.g V5_2.6.5/V5_2.4.2")
+parser.add_argument("-arch", "--arch", dest="arch", default="slc7",
+                    help="which Arch what to keep for gridpack")
 
 args = parser.parse_args()
 
@@ -31,6 +33,7 @@ print("is4FS: ",args.is4FS)
 print("version: ", args.version)
 print("era: ",args.era)
 print("MGversion: ",args.mgversion)
+print("arch: ",args.arch)
 
 # ##############################################
 # ############ CHECK EOS PERMISSIONS ###########
@@ -116,19 +119,21 @@ for fullgridpackpath in fullgridpackpaths:
 
         #os.system('echo '+fullgridpackpath) # this is just for prining initial full path
 	gridpackname = fullgridpackpath.split("/")[-1]
+        #print "check: ", fullgridpackpath
+        newpath = fullgridpackpath.rstrip()
         # check gridpack permission throw errors if not 644
         errormsg = '{:<20} {:<40}'.format("%sGridpack" % (colors.colordict["RED"]) , ": "+fullgridpackpath)
-        if (int (oct(os.stat(fullgridpackpath)[ST_MODE])[-3:])) != 644:
+        if (int (oct(os.stat(newpath)[ST_MODE])[-3:])) != 644:
            raise Exception(errormsg + "\nhas different permission than 644!")
 	#print("gridpackname", gridpackname)
-        #gridpackdir = gridpackname.split("_slc6")[0]
-        gridpackdir = gridpackname.split("_slc7")[0]
+        gridpackdir = gridpackname.split("_"+args.arch)[0]
+        #gridpackdir = gridpackname.split("_slc7")[0]
 	#print("gridpackdir", gridpackdir)
 	version = args.version 
         if (args.era == "2016"): 
-           basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/slc6_amd64_gcc630/13TeV/madgraph'
+           # basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/slc6_amd64_gcc630/13TeV/madgraph'
            # basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/slc6_amd64_gcc481/13TeV/madgraph'
-           # basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/pre2017/13TeV/madgraph'
+           basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/pre2017/13TeV/madgraph'
         elif (args.era == "2017"):
            basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/2017/13TeV/madgraph'
         elif (args.era == "UL"):
