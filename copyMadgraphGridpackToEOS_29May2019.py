@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from stat import *
 '''
 #Last used:
+python copyMadgraphGridpackToEOS_29May2019.py --file filedir/dynunu_Tommaso_17Mar2021.txt --era UL --MGversion V5_2.6.5
 python copyMadgraphGridpackToEOS_29May2019.py --file filedir/HWW_one.txt --era 2016 --MGversion V5_2.6.5 --version v2
 '''
 parser = ArgumentParser()
@@ -25,6 +26,12 @@ parser.add_argument("-MGversion", "--MGversion", dest="mgversion", default="V5_2
 parser.add_argument("-arch", "--arch", dest="arch", default="slc7",
                     help="which Arch what to keep for gridpack")
 
+parser.add_argument("-extraDir", "--extraDir", dest="extraDir", default=False,
+                    help="if you want to copy gridpack in a paricular dir make it True")
+
+parser.add_argument("-extraDirName", "--extraDirName", dest="extraDirName", default="besure",
+                    help="if you want to copy gridpacks in a particular dir")
+
 args = parser.parse_args()
 
 print("Filename: ",args.filename)
@@ -34,7 +41,8 @@ print("version: ", args.version)
 print("era: ",args.era)
 print("MGversion: ",args.mgversion)
 print("arch: ",args.arch)
-
+print("extraDir: ", args.extraDir)
+print("extraDirName: ", args.extraDirName)
 # ##############################################
 # ############ CHECK EOS PERMISSIONS ###########
 # ##############################################
@@ -143,6 +151,8 @@ for fullgridpackpath in fullgridpackpaths:
 
         #MGversion = 'V5_2.4.2'
         MGversion = args.mgversion #'V5_2.6.5'
+        if (args.extraDir):
+           extraDirName = args.extraDirName
 
 	if (args.is4FS):
            eos_dirpath = basedir+'/'+MGversion+'/4FS/'+gridpackdir+'/'+version+'/'
@@ -153,7 +163,18 @@ for fullgridpackpath in fullgridpackpaths:
            eos_path_to_copy = basedir+'/'+MGversion+'/4FS/'+gridpackdir+'/'+version+'/'+gridpackname
         else:
            eos_path_to_copy = basedir+'/'+MGversion+'/'+gridpackdir+'/'+version+'/'+gridpackname
-	#print("eos_path_to_copy", eos_path_to_copy)
+
+        if (args.extraDir):
+           if(args.is4FS):
+              eos_path_to_copy = basedir+'/'+MGversion+'/4FS/'+extraDirName+'/'+gridpackdir+'/'+version+'/'+gridpackname
+              eos_dirpath = basedir+'/'+MGversion+'/4FS/'+extraDirName+'/'+gridpackdir+'/'+version+'/'
+           else:
+              eos_path_to_copy = basedir+'/'+MGversion+'/'+extraDirName+'/'+gridpackdir+'/'+version+'/'+gridpackname
+              eos_dirpath = basedir+'/'+MGversion+'/'+extraDirName+'/'+gridpackdir+'/'+version+'/'
+              
+	#print("Sanity: eos_path_to_copy", eos_path_to_copy)
+        #print("Sanity: eos_dirpath", eos_dirpath)
+
 	gridpack_cvmfs_path = eos_path_to_copy.replace('/eos/cms/store/group/phys_generator/cvmfs/gridpacks/','/cvmfs/cms.cern.ch/phys_generator/gridpacks/')
         os.system('echo "------------------------------------"')
 	print "gridpack_cvmfs_path:  ", gridpack_cvmfs_path
