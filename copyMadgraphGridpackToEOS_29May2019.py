@@ -3,6 +3,7 @@ from argparse import ArgumentParser
 from stat import *
 '''
 #Last used:
+python copyMadgraphGridpackToEOS_29May2019.py --file filedir/Lata_07May_2021.txt 
 python copyMadgraphGridpackToEOS_29May2019.py --file filedir/dynunu_Tommaso_17Mar2021.txt --era UL --MGversion V5_2.6.5
 python copyMadgraphGridpackToEOS_29May2019.py --file filedir/HWW_one.txt --era 2016 --MGversion V5_2.6.5 --version v2
 '''
@@ -19,9 +20,9 @@ parser.add_argument("-is4FS", "--is4FS", dest="is4FS", default=False,
                     help="make it to true if you want to make a subdir with 4FS")
 parser.add_argument("-version", "--version", dest="version", default="v1",
                     help="if you want to copy in v2 directry")
-parser.add_argument("-era", "--era", dest="era", default="2017",
+parser.add_argument("-era", "--era", dest="era", default="UL",
                     help="where to keep the gridpack e.g 2017")
-parser.add_argument("-MGversion", "--MGversion", dest="mgversion", default="V5_2.6.0",
+parser.add_argument("-MGversion", "--MGversion", dest="mgversion", default="V5_2.6.5",
                     help="which version of MadGraph5 e.g V5_2.6.5/V5_2.4.2")
 parser.add_argument("-arch", "--arch", dest="arch", default="slc7",
                     help="which Arch what to keep for gridpack")
