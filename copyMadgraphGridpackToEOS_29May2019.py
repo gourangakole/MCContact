@@ -191,7 +191,7 @@ for fullgridpackpath in fullgridpackpaths:
 		if(args.doCopy):
 			print "copy"
 			os.system('eos cp ' +fullgridpackpath+ ' '+eos_path_to_copy); sys.stdout.flush()
-		
+                        # os.system('cp ' +fullgridpackpath+ ' '+eos_path_to_copy); sys.stdout.flush() # if the user's file on EOS then do "cp bla bla" 
         #os.system('mkdir -p '+my_path+'/'+prepid)
         #os.chdir(my_path+'/'+prepid)
         #os.system('wget -q https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/'+prepid+' -O '+prepid)
