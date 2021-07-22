@@ -84,7 +84,8 @@ for fullgridpackpath in fullgridpackpaths:
 	#print("gridpackdir", gridpackdir)
 	version = args.version # change if needed by hand
         if (args.era == "2016"): 
-           basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/slc6_amd64_gcc630/13TeV/Powheg'
+           # basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/slc6_amd64_gcc630/13TeV/Powheg'
+           basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/slc7_amd64_gcc700/13TeV/powhegV2'
         elif (args.era == "2017"):
            basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/2017/13TeV/powheg'
         elif (args.era == "UL"):
@@ -93,9 +94,12 @@ for fullgridpackpath in fullgridpackpaths:
            basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/2018/13TeV/powheg'
            
 	# basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/2017/13TeV/madgraph'
-	MGversion = 'V2'
-	eos_dirpath = basedir+'/'+MGversion+'/'+gridpackdir+'/'+version+'/'
-	eos_path_to_copy = basedir+'/'+MGversion+'/'+gridpackdir+'/'+version+'/'+gridpackname
+	if (args.era == "2016"):
+           MGversion = ''
+        else:
+           MGversion = 'V2/'
+	eos_dirpath = basedir+'/'+MGversion+gridpackdir+'/'+version+'/'
+	eos_path_to_copy = basedir+'/'+MGversion+gridpackdir+'/'+version+'/'+gridpackname
 	#print("eos_path_to_copy", eos_path_to_copy)
 	gridpack_cvmfs_path = eos_path_to_copy.replace('/eos/cms/store/group/phys_generator/cvmfs/gridpacks/','/cvmfs/cms.cern.ch/phys_generator/gridpacks/')
         os.system('echo "------------------------------------"')
@@ -112,7 +116,7 @@ for fullgridpackpath in fullgridpackpaths:
 		if(args.doCopy):
 			print "copy"
 			os.system('eos cp ' +fullgridpackpath+ ' '+eos_path_to_copy); sys.stdout.flush()
-		
+                        # os.system('cp ' +fullgridpackpath+ ' '+eos_path_to_copy); sys.stdout.flush() # if the user's file on EOS then do "cp bla bla"
         #os.system('mkdir -p '+my_path+'/'+prepid)
         #os.chdir(my_path+'/'+prepid)
         #os.system('wget -q https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/'+prepid+' -O '+prepid)
@@ -128,3 +132,13 @@ for fullgridpackpath in fullgridpackpaths:
 ######## END LOOP OVER PREPIDS ###########
 ##########################################
 os.system('echo "------------------------------------"')
+
+#        gridpack_eos_path = gridpack_cvmfs_path.replace('/cvmfs/cms.cern.ch/phys_generator/gridpacks/','/eos/cms/store/group/phys_generator/cvmfs/gridpacks/')
+
+   
+       
+ 
+        
+              
+
+              
