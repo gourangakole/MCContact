@@ -57,6 +57,7 @@ print("extraDirName: ", args.extraDirName)
 # ##############################################
 
 #my_path = '/tmp/'+os.environ['USER']+'/replace_gridpacks/'
+# https://stackoverflow.com/questions/287871/how-to-print-colored-text-to-the-terminal
 class colors:
    colordict = {
                 'RED'        : '\033[91m',
@@ -72,7 +73,8 @@ class colors:
                 'YELLOW'     : '\033[93m',
                 'BLINK'      : '\033[5m' ,
                 'NORMAL'     : '\033[28m' ,
-                "WARNING"    : '\033[1;31m',
+                "WARNING"    : '\033[33m',
+                "CEND"       : '\033[0m',
                 }
    if sys.stdout.isatty():
         RED      = colordict['RED']
@@ -89,6 +91,7 @@ class colors:
         BLINK    = colordict['BLINK']
         NORMAL   = colordict['NORMAL']
         WARNING  = colordict['WARNING']
+        CEND     = colordict['CEND']
    else:
         RED, GREEN, BLUE, GRAY, WHITE, ORANGE, CYAN, PURPLE, LIGHTRED, PINK, YELLOW, BLINK, NORMAL, WARNING = '', '', '', '', '', '', '', '', '', '', '', '', '', ''
 
@@ -115,11 +118,9 @@ print "Total number of gridpack: ", len(fullgridpackpaths)
 
 #fullgridpackpaths = [
 #'/afs/cern.ch/work/w/wshi/public/MSSMD_Mneu1_60_MAD_8p5_cT_1_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz',
-#'/afs/cern.ch/work/w/wshi/public/MSSMD_Mneu1_60_MAD_8p5_cT_2_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz',
 #'/afs/cern.ch/work/w/wshi/public/MSSMD_Mneu1_60_MAD_8p5_cT_3_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz',
 #'/eos/cms/store/user/gkole/Hgg/MC_contact/2017_gridpack/ggh/ggh012j_5f_NLO_FXFX_125_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz',
 #           ]
-
 
 ##########################################
 ######## START LOOP OVER EACH GRIDPACK #########
@@ -150,7 +151,6 @@ for fullgridpackpath in fullgridpackpaths:
         else:
            basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/2018/13TeV/madgraph'
 
-        #MGversion = 'V5_2.4.2'
         MGversion = args.mgversion #'V5_2.6.5'
         if (args.extraDir):
            extraDirName = args.extraDirName
@@ -178,9 +178,10 @@ for fullgridpackpath in fullgridpackpaths:
 
 	gridpack_cvmfs_path = eos_path_to_copy.replace('/eos/cms/store/group/phys_generator/cvmfs/gridpacks/','/cvmfs/cms.cern.ch/phys_generator/gridpacks/')
         os.system('echo "------------------------------------"')
-	print "gridpack_cvmfs_path:  ", gridpack_cvmfs_path
+	print "gridpack_cvmfs_path:  ", colors.colordict["GREEN"] + gridpack_cvmfs_path + colors.colordict["CEND"]
+
 	if not os.path.exists(eos_dirpath):
-		print "ERROR: not existing so creating"
+		print colors.colordict["WARNING"]+"ERROR: not existing so creating"+colors.colordict["CEND"]
 		print('eos mkdir -p ' + eos_dirpath);sys.stdout.flush() 
 		if(args.doCopy):
 			print "copy"
