@@ -6,6 +6,7 @@
 
 import os,sys
 from argparse import ArgumentParser
+from stat import *
 
 parser = ArgumentParser()
 
@@ -41,6 +42,43 @@ print("era: ",args.era)
 # ##############################################
 
 #my_path = '/tmp/'+os.environ['USER']+'/replace_gridpacks/'
+# https://stackoverflow.com/questions/287871/how-to-print-colored-text-to-the-terminal
+class colors:
+   colordict = {
+                'RED'        : '\033[91m',
+                'GREEN'      : '\033[92m',
+                'BLUE'       : '\033[34m',
+                'GRAY'       : '\033[90m',
+                'WHITE'      : '\033[00m',
+                'ORANGE'     : '\033[33m',
+                'CYAN'       : '\033[36m',
+                'PURPLE'     : '\033[35m',
+                'LIGHTRED'   : '\033[91m',
+                'PINK'       : '\033[95m',
+                'YELLOW'     : '\033[93m',
+                'BLINK'      : '\033[5m' ,
+                'NORMAL'     : '\033[28m' ,
+                "WARNING"    : '\033[33m',
+                "CEND"       : '\033[0m',
+                }
+   if sys.stdout.isatty():
+        RED      = colordict['RED']
+        GREEN    = colordict['GREEN']
+        BLUE     = colordict['BLUE']
+        GRAY     = colordict['GRAY']
+        WHITE    = colordict['WHITE']
+        ORANGE   = colordict['ORANGE']
+        CYAN     = colordict['CYAN']
+        PURPLE   = colordict['PURPLE']
+        LIGHTRED = colordict['LIGHTRED']
+        PINK     = colordict['PINK']
+        YELLOW   = colordict['YELLOW']
+        BLINK    = colordict['BLINK']
+        NORMAL   = colordict['NORMAL']
+        WARNING  = colordict['WARNING']
+        CEND     = colordict['CEND']
+   else:
+        RED, GREEN, BLUE, GRAY, WHITE, ORANGE, CYAN, PURPLE, LIGHTRED, PINK, YELLOW, BLINK, NORMAL, WARNING = '', '', '', '', '', '', '', '', '', '', '', '', '', ''
 
 #----------------------------------------------------------------------
 # main
@@ -80,6 +118,12 @@ for fullgridpackpath in fullgridpackpaths:
 	#print('stat -c "%a %n"' +fullgridpackpath) # FIXME in future for check the permission
 	gridpackname = fullgridpackpath.split("/")[-1]
 	#print("gridpackname", gridpackname)
+        newpath = fullgridpackpath.rstrip()
+        # check gridpack permission throw errors if not 644
+        errormsg = '{:<20} {:<40}'.format("%sGridpack" % (colors.colordict["RED"]) , ": "+fullgridpackpath)
+        if (int (oct(os.stat(newpath)[ST_MODE])[-3:])) != 644:
+           raise Exception(errormsg + "\nhas different permission than 644!")
+           
 	gridpackdir = gridpackname.split(".tgz")[0]
 	#print("gridpackdir", gridpackdir)
 	version = args.version # change if needed by hand
@@ -103,9 +147,9 @@ for fullgridpackpath in fullgridpackpaths:
 	#print("eos_path_to_copy", eos_path_to_copy)
 	gridpack_cvmfs_path = eos_path_to_copy.replace('/eos/cms/store/group/phys_generator/cvmfs/gridpacks/','/cvmfs/cms.cern.ch/phys_generator/gridpacks/')
         os.system('echo "------------------------------------"')
-	print "gridpack_cvmfs_path:  ", gridpack_cvmfs_path
+	print "gridpack_cvmfs_path:  ", colors.colordict["GREEN"] + gridpack_cvmfs_path + colors.colordict["CEND"]
 	if not os.path.exists(eos_dirpath):
-		print "ERROR: not existing so creating"
+		print colors.colordict["WARNING"] + "ERROR: not existing so creating" + colors.colordict["CEND"]
 		print('eos mkdir -p ' + eos_dirpath);sys.stdout.flush() 
 		if(args.doCopy):
 			print "copy"
@@ -116,7 +160,7 @@ for fullgridpackpath in fullgridpackpaths:
 		if(args.doCopy):
 			print "copy"
 			os.system('eos cp ' +fullgridpackpath+ ' '+eos_path_to_copy); sys.stdout.flush()
-                        # os.system('cp ' +fullgridpackpath+ ' '+eos_path_to_copy); sys.stdout.flush() # if the user's file on EOS then do "cp bla bla"
+                        #os.system('cp ' +fullgridpackpath+ ' '+eos_path_to_copy); sys.stdout.flush() # if the user's file on EOS then do "cp bla bla"
         #os.system('mkdir -p '+my_path+'/'+prepid)
         #os.chdir(my_path+'/'+prepid)
         #os.system('wget -q https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/'+prepid+' -O '+prepid)
