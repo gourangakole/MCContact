@@ -14,7 +14,7 @@ parser = ArgumentParser()
 parser.add_argument("-f", "--file", dest="filename",
                     help="input FILE", metavar="FILE")
 parser.add_argument("-copy", "--copyToEos", dest="doCopy", default=False,
-                    help="make it to true if you want to really copy to eos")
+                    help="make it to True if you want to really copy to eos")
 
 parser.add_argument("-is4FS", "--is4FS", dest="is4FS", default=False,
                     help="make it to true if you want to make a subdir with 4FS")
