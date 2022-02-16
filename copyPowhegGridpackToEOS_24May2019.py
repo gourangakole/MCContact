@@ -14,7 +14,7 @@ parser = ArgumentParser()
 # Add more options if you like
 parser.add_argument("-f", "--file", dest="filename",
                     help="input FILE", metavar="FILE")
-parser.add_argument("-copy", "--doCopyToEos", dest="doCopy", default=False,
+parser.add_argument("-copy", "--copyToEos", action="store_true", dest="doCopy", default=False,
                     help="make it to True if you want to really copy to eos")
 parser.add_argument("-version", "--version", dest="version", default="v1",
                     help="change if needed")
