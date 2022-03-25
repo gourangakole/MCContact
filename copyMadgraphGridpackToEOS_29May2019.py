@@ -6,6 +6,8 @@ from stat import *
 python copyMadgraphGridpackToEOS_29May2019.py --file filedir/Lata_07May_2021.txt 
 python copyMadgraphGridpackToEOS_29May2019.py --file filedir/dynunu_Tommaso_17Mar2021.txt --era UL --MGversion V5_2.6.5
 python copyMadgraphGridpackToEOS_29May2019.py --file filedir/HWW_one.txt --era 2016 --MGversion V5_2.6.5 --version v2
+python copyMadgraphGridpackToEOS_29May2019.py --file filedir/HExtended_T_16Mar2022.txt --extraDir True --extraDirName GF_Spin_0
+python copyMadgraphGridpackToEOS_29May2019.py --file filedir/Thomasso_25Mar2022.txt --era 2017 --MGversion V5_2.4.2 --arch slc6 -copy
 '''
 parser = ArgumentParser()
 
