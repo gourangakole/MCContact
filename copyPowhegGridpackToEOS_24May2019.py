@@ -2,6 +2,8 @@
 #####
 # python copyPowhegGridpackToEOS_24May2019.py -h
 # python copyPowhegGridpackToEOS_24May2019.py --file file.txt --era UL 
+# python copyPowhegGridpackToEOS_24May2019.py --file filedir/HZZ_VBF_4Apr2022.txt --jhugen -copy 
+# python copyPowhegGridpackToEOS_24May2019.py --file filedir/HZZ_ZH_4Apr2022.txt --jhugen --jhugenversion 750 -copy
 ####
 
 import os,sys
@@ -16,6 +18,10 @@ parser.add_argument("-f", "--file", dest="filename",
                     help="input FILE", metavar="FILE")
 parser.add_argument("-copy", "--copyToEos", action="store_true", dest="doCopy", default=False,
                     help="make it to True if you want to really copy to eos")
+parser.add_argument("-jhugen", "--jhugen", action="store_true", dest="jhugen", default=False,
+                    help="make it to True if gridpacks are jhugen")
+parser.add_argument("-jhugenversion", "--jhugenversion", dest="jhugenversion", default="751",
+                    help="default jhuversion is V751")
 parser.add_argument("-version", "--version", dest="version", default="v1",
                     help="change if needed")
 parser.add_argument("-era", "--era", dest="era", default="UL",
@@ -28,6 +34,8 @@ print("Input Filename: ",args.filename)
 print("copyToEos:      ",args.doCopy)
 print("version:        ", args.version)
 print("era:            ",args.era)
+print("jhugen:         ",args.jhugen)
+print("jhugenversion   ",args.jhugenversion)
 
 # ##############################################
 # ############ CHECK EOS PERMISSIONS ###########
@@ -102,12 +110,8 @@ fullgridpackpaths = open(inputFname).read().splitlines()
 print "Total number of gridpacks: ", len(fullgridpackpaths)
 
 #fullgridpackpaths = [
-#'/afs/cern.ch/work/w/wshi/public/MSSMD_Mneu1_60_MAD_8p5_cT_1_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz',
-#'/afs/cern.ch/work/w/wshi/public/MSSMD_Mneu1_60_MAD_8p5_cT_2_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz',
-#'/afs/cern.ch/work/w/wshi/public/MSSMD_Mneu1_60_MAD_8p5_cT_3_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz',
 #'/eos/cms/store/user/gkole/Hgg/MC_contact/2017_gridpack/ggh/ggh012j_5f_NLO_FXFX_125_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz',
 #           ]
-
 
 ##########################################
 ######## START LOOP OVER EACH GRIDPACK #########
@@ -133,7 +137,10 @@ for fullgridpackpath in fullgridpackpaths:
         elif (args.era == "2017"):
            basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/2017/13TeV/powheg'
         elif (args.era == "UL"):
-           basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/UL/13TeV/powheg'
+           if args.jhugen :
+              basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/UL/13TeV/jhugen/V'+args.jhugenversion
+           else:
+              basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/UL/13TeV/powheg'
         else:
            basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/2018/13TeV/powheg'
            
@@ -141,7 +148,10 @@ for fullgridpackpath in fullgridpackpaths:
 	if (args.era == "2016"):
            MGversion = ''
         else:
-           MGversion = 'V2/'
+           if args.jhugen :
+              MGversion = ''
+           else:
+              MGversion = 'V2/'
 	eos_dirpath = basedir+'/'+MGversion+gridpackdir+'/'+version+'/'
 	eos_path_to_copy = basedir+'/'+MGversion+gridpackdir+'/'+version+'/'+gridpackname
 	#print("eos_path_to_copy", eos_path_to_copy)
