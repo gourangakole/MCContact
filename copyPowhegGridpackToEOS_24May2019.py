@@ -9,7 +9,7 @@
 import os,sys
 from argparse import ArgumentParser
 from stat import *
-
+import datetime
 parser = ArgumentParser()
 
 # https://martin-thoma.com/how-to-parse-command-line-arguments-in-python/
@@ -21,21 +21,24 @@ parser.add_argument("-copy", "--copyToEos", action="store_true", dest="doCopy", 
 parser.add_argument("-jhugen", "--jhugen", action="store_true", dest="jhugen", default=False,
                     help="make it to True if gridpacks are jhugen")
 parser.add_argument("-jhugenversion", "--jhugenversion", dest="jhugenversion", default="751",
-                    help="default jhuversion is V751")
+                    help="default jhuversion is 751")
 parser.add_argument("-version", "--version", dest="version", default="v1",
                     help="change if needed")
 parser.add_argument("-era", "--era", dest="era", default="UL",
                     help="where to keep the gridpack e.g 2017/UL")
+parser.add_argument("-o", "--output", dest="output", default="output.txt",
+                    help="output FILE", metavar="FILE")
 args = parser.parse_args()
 
 #print(args.filename)
 #print(args.doCopy)
-print("Input Filename: ",args.filename)
-print("copyToEos:      ",args.doCopy)
-print("version:        ", args.version)
-print("era:            ",args.era)
-print("jhugen:         ",args.jhugen)
-print("jhugenversion   ",args.jhugenversion)
+print("Input Filename:  ",args.filename)
+print("copyToEos:       ",args.doCopy)
+print("version:         ", args.version)
+print("era:             ",args.era)
+print("jhugen:          ",args.jhugen)
+print("jhugenversion    ",args.jhugenversion)
+print("Output Filename: ",args.output)
 
 # ##############################################
 # ############ CHECK EOS PERMISSIONS ###########
@@ -113,80 +116,97 @@ print "Total number of gridpacks: ", len(fullgridpackpaths)
 #'/eos/cms/store/user/gkole/Hgg/MC_contact/2017_gridpack/ggh/ggh012j_5f_NLO_FXFX_125_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz',
 #           ]
 
+# open a file to store output paths:
+if (len(args.output) > 0):
+   finalpath =  open(args.output,"w")
+   start = ["Final (copied on ", datetime.datetime.now().strftime("%d%b%YT%H%M"), ") Gridpack cvmfs paths are below\n"]
+   finalpath.writelines(start)
+   
 ##########################################
 ######## START LOOP OVER EACH GRIDPACK #########
 ##########################################
 for fullgridpackpath in fullgridpackpaths:
-
-        #os.system('echo '+fullgridpackpath) # this is just for prining initial full path
-	#print('stat -c "%a %n"' +fullgridpackpath) # FIXME in future for check the permission
-	gridpackname = fullgridpackpath.split("/")[-1]
-	#print("gridpackname", gridpackname)
-        newpath = fullgridpackpath.rstrip()
-        # check gridpack permission throw errors if not 644
-        errormsg = '{:<20} {:<40}'.format("%sGridpack" % (colors.colordict["RED"]) , ": "+fullgridpackpath)
-        if (int (oct(os.stat(newpath)[ST_MODE])[-3:])) != 644:
-           raise Exception(errormsg + "\nhas different permission than 644!")
+   #os.system('echo '+fullgridpackpath) # this is just for prining initial full path
+   #print('stat -c "%a %n"' +fullgridpackpath) # FIXME in future for check the permission
+   gridpackname = fullgridpackpath.split("/")[-1]
+   #print("gridpackname", gridpackname)
+   newpath = fullgridpackpath.rstrip()
+   # check gridpack permission throw errors if not 644
+   errormsg = '{:<20} {:<40}'.format("%sGridpack" % (colors.colordict["RED"]) , ": "+fullgridpackpath)
+   if (int (oct(os.stat(newpath)[ST_MODE])[-3:])) != 644:
+      raise Exception(errormsg + "\nhas different permission than 644!")
            
-	gridpackdir = gridpackname.split(".tgz")[0]
-	#print("gridpackdir", gridpackdir)
-	version = args.version # change if needed by hand
-        if (args.era == "2016"): 
-           # basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/slc6_amd64_gcc630/13TeV/Powheg'
-           basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/slc7_amd64_gcc700/13TeV/powhegV2'
-        elif (args.era == "2017"):
-           basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/2017/13TeV/powheg'
-        elif (args.era == "UL"):
-           if args.jhugen :
-              basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/UL/13TeV/jhugen/V'+args.jhugenversion
-           else:
-              basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/UL/13TeV/powheg'
-        else:
-           basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/2018/13TeV/powheg'
-           
-	# basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/2017/13TeV/madgraph'
-	if (args.era == "2016"):
-           MGversion = ''
-        else:
-           if args.jhugen :
-              MGversion = ''
-           else:
-              MGversion = 'V2/'
-	eos_dirpath = basedir+'/'+MGversion+gridpackdir+'/'+version+'/'
-	eos_path_to_copy = basedir+'/'+MGversion+gridpackdir+'/'+version+'/'+gridpackname
-	#print("eos_path_to_copy", eos_path_to_copy)
-	gridpack_cvmfs_path = eos_path_to_copy.replace('/eos/cms/store/group/phys_generator/cvmfs/gridpacks/','/cvmfs/cms.cern.ch/phys_generator/gridpacks/')
-        os.system('echo "------------------------------------"')
-	print "gridpack_cvmfs_path:  ", colors.colordict["GREEN"] + gridpack_cvmfs_path + colors.colordict["CEND"]
-	if not os.path.exists(eos_dirpath):
-		print colors.colordict["WARNING"] + "ERROR: not existing so creating" + colors.colordict["CEND"]
-		print('eos mkdir -p ' + eos_dirpath);sys.stdout.flush() 
-		if(args.doCopy):
-			print "copy"
-			os.system('eos mkdir -p ' + eos_dirpath);sys.stdout.flush()
-
-	if not os.path.isfile(eos_path_to_copy):
-		print('eos cp ' +fullgridpackpath+ ' '+eos_path_to_copy); sys.stdout.flush()
-		if(args.doCopy):
-			print "copy"
-			os.system('eos cp ' +fullgridpackpath+ ' '+eos_path_to_copy); sys.stdout.flush()
-                        #os.system('cp ' +fullgridpackpath+ ' '+eos_path_to_copy); sys.stdout.flush() # if the user's file on EOS then do "cp bla bla"
-        #os.system('mkdir -p '+my_path+'/'+prepid)
-        #os.chdir(my_path+'/'+prepid)
-        #os.system('wget -q https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/'+prepid+' -O '+prepid)
-        #gridpack_cvmfs_path = os.popen('grep \/cvmfs '+prepid).read()
-        #gridpack_cvmfs_path = gridpack_cvmfs_path.split('\'')[1]
-	#print (gridpack_cvmfs_path)
-	#os.system('tar xf '+gridpack_cvmfs_path+' -C'+my_path+'/'+prepid)
-	#os.system('more '+my_path+'/'+prepid+'/'+'runcmsgrid.sh | grep "FORCE IT TO"')
-	#os.system('grep _CONDOR_SCRATCH_DIR '+my_path+'/'+prepid+'/'+'mgbasedir/Template/LO/SubProcesses/refine.sh')
-	#os.system('echo "------------------------------------"')
-#        os.system('rm '+prepid)
+   if gridpackname.endswith(".tar.gz"):   
+      gridpackdir = gridpackname.split(".tar.gz")[0]
+   else:
+      gridpackdir = gridpackname.split(".tgz")[0]
+      #print("gridpackdir", gridpackdir)
+   version = args.version # change if needed by hand
+   if (args.era == "2016"): 
+      # basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/slc6_amd64_gcc630/13TeV/Powheg'
+      basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/slc7_amd64_gcc700/13TeV/powhegV2'
+   elif (args.era == "2017"):
+      basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/2017/13TeV/powheg'
+   elif (args.era == "UL"):
+      if args.jhugen :
+         basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/UL/13TeV/jhugen/V'+args.jhugenversion
+      else:
+         basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/UL/13TeV/powheg'
+   else:
+      basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/2018/13TeV/powheg'
+   # Where to keep the gridpack        
+   if (args.era == "2016"):
+      MGversion = ''
+   else:
+      if args.jhugen :
+         MGversion = ''
+      else:
+         MGversion = 'V2/'
+   eos_dirpath = basedir+'/'+MGversion+gridpackdir+'/'+version+'/'
+   eos_path_to_copy = basedir+'/'+MGversion+gridpackdir+'/'+version+'/'+gridpackname
+   #print("eos_path_to_copy", eos_path_to_copy)
+   gridpack_cvmfs_path = eos_path_to_copy.replace('/eos/cms/store/group/phys_generator/cvmfs/gridpacks/','/cvmfs/cms.cern.ch/phys_generator/gridpacks/')
+   
+   # Save in a txt file:
+   if(args.doCopy):
+      content = "gridpack_cvmfs_path:  ", gridpack_cvmfs_path,"\n"
+      finalpath.writelines("------------------------------------\n")
+      finalpath.writelines(content)
+   
+   os.system('echo "------------------------------------"')
+   print "gridpack_cvmfs_path:  ", colors.colordict["GREEN"] + gridpack_cvmfs_path + colors.colordict["CEND"]
+   
+   if not os.path.exists(eos_dirpath):
+      print colors.colordict["WARNING"] + "ERROR: not existing so creating" + colors.colordict["CEND"]
+      print('eos mkdir -p ' + eos_dirpath);sys.stdout.flush() 
+      if(args.doCopy):
+         print "copy"
+         os.system('eos mkdir -p ' + eos_dirpath);sys.stdout.flush()
+      
+   if not os.path.isfile(eos_path_to_copy):
+      print('eos cp ' +fullgridpackpath+ ' '+eos_path_to_copy); sys.stdout.flush()
+      if(args.doCopy):
+         print "copy"
+         os.system('eos cp ' +fullgridpackpath+ ' '+eos_path_to_copy); sys.stdout.flush()
+         #os.system('cp ' +fullgridpackpath+ ' '+eos_path_to_copy); sys.stdout.flush() # if the user's file on EOS then do "cp bla bla"
+   
+   # Note: Extra some syntax need can be removed
+   #os.system('mkdir -p '+my_path+'/'+prepid)
+   #os.chdir(my_path+'/'+prepid)
+   #os.system('wget -q https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/'+prepid+' -O '+prepid)
+   #gridpack_cvmfs_path = os.popen('grep \/cvmfs '+prepid).read()
+   #gridpack_cvmfs_path = gridpack_cvmfs_path.split('\'')[1]
+   #print (gridpack_cvmfs_path)
+   #os.system('tar xf '+gridpack_cvmfs_path+' -C'+my_path+'/'+prepid)
+   #os.system('more '+my_path+'/'+prepid+'/'+'runcmsgrid.sh | grep "FORCE IT TO"')
+   #os.system('grep _CONDOR_SCRATCH_DIR '+my_path+'/'+prepid+'/'+'mgbasedir/Template/LO/SubProcesses/refine.sh')
+   #os.system('echo "------------------------------------"')
+   #os.system('rm '+prepid)
 ##########################################
 ######## END LOOP OVER PREPIDS ###########
 ##########################################
 os.system('echo "------------------------------------"')
-
+finalpath.close()
 #        gridpack_eos_path = gridpack_cvmfs_path.replace('/cvmfs/cms.cern.ch/phys_generator/gridpacks/','/eos/cms/store/group/phys_generator/cvmfs/gridpacks/')
 
    
