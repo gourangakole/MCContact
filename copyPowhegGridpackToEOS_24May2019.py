@@ -2,8 +2,7 @@
 #####
 # python copyPowhegGridpackToEOS_24May2019.py -h
 # python copyPowhegGridpackToEOS_24May2019.py --file file.txt --era UL 
-# python copyPowhegGridpackToEOS_24May2019.py --file filedir/HZZ_VBF_4Apr2022.txt --jhugen -copy 
-# python copyPowhegGridpackToEOS_24May2019.py --file filedir/HZZ_ZH_4Apr2022.txt --jhugen --jhugenversion 750 -copy
+# python copyPowhegGridpackToEOS_24May2019.py --file filedir/HWW_18Aug2022.txt --jhugen --jhugenversion 735 -copy -o HWW_grdpack.txt
 ####
 
 import os,sys
