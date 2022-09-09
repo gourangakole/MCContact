@@ -145,7 +145,10 @@ for fullgridpackpath in fullgridpackpaths:
       # basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/slc6_amd64_gcc630/13TeV/Powheg'
       basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/slc7_amd64_gcc700/13TeV/powhegV2'
    elif (args.era == "2017"):
-      basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/2017/13TeV/powheg'
+      if args.jhugen :
+         basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/2017/13TeV/jhugen/V'+args.jhugenversion
+      else:
+         basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/2017/13TeV/powheg'
    elif (args.era == "UL"):
       if args.jhugen :
          basedir = '/eos/cms/store/group/phys_generator/cvmfs/gridpacks/UL/13TeV/jhugen/V'+args.jhugenversion
